@@ -28,6 +28,9 @@ SOFTWARE.
 
 namespace parAlmond {
 
+
+
+/*
 void formAggregates(parCSR *A, parCSR *C,
                      hlong* FineToCoarse,
                      hlong* globalAggStarts){
@@ -40,6 +43,11 @@ void formAggregates(parCSR *A, parCSR *C,
   const dlong M   = C->Ncols;
   const dlong diagNNZ = C->diag->nnz;
   const dlong offdNNZ = C->offd->nnz;
+
+	printf("----------------------\n");
+	printf(" rank = %d   N =  %d M = %d \n",rank,N,M);
+	printf("----------------------\n");
+
 
   dfloat *rands = (dfloat *) calloc(M, sizeof(dfloat));
   int   *states = (int *)    calloc(M, sizeof(int));
@@ -164,6 +172,13 @@ void formAggregates(parCSR *A, parCSR *C,
     MPI_Allreduce(&cnt,&done,1,MPI_HLONG, MPI_SUM,A->comm);
     done = (done == 0) ? 1 : 0;
   }
+  
+  
+	printf("\n ------ states (RANK  = %d ) antes ------\n",rank);
+	for (dlong i=0;i<M;i++)
+		printf("%d ",states[i]);
+	printf("\n ----------------------\n");
+
 
   dlong numAggs = 0;
   dlong *gNumAggs = (dlong *) calloc(size,sizeof(dlong));
@@ -172,11 +187,26 @@ void formAggregates(parCSR *A, parCSR *C,
   for(dlong i=0; i<N; i++)
     if(states[i] == 1) numAggs++;
 
+	printf("\n ---------------------\n");
+	printf("rank = %d  size =%d  forming  munAggs = %d ",rank,size,numAggs);
+	printf("\n ----------------------\n");
+
+
   MPI_Allgather(&numAggs,1,MPI_DLONG,gNumAggs,1,MPI_DLONG,A->comm);
+
+	printf("\n ----------rank = %d  size =%d-----------\n",rank,size);
+	 for (int r=0;r<size;r++)
+    	printf(" %d ",gNumAggs[r]);
+	printf("\n ----------------------\n");
 
   globalAggStarts[0] = 0;
   for (int r=0;r<size;r++)
     globalAggStarts[r+1] = globalAggStarts[r] + gNumAggs[r];
+
+	printf("\n ------ globalAggStarts (RANK  = %d ) ------\n",rank);
+	for (dlong i=0;i<size+1;i++)
+		printf("%d ",globalAggStarts[i]);
+	printf("\n ----------------------\n");
 
   numAggs = 0;
   // enumerate the coarse nodes/aggregates
@@ -189,8 +219,22 @@ void formAggregates(parCSR *A, parCSR *C,
   }
   for(dlong i=N; i<M; i++) FineToCoarse[i] = 0;
 
+	printf("\n ------ FineToCoarse (RANK  = %d ) antes ------\n",rank);
+	for (dlong i=0;i<M;i++)
+		printf("%d\t%d\t%d\t%d\t%d\n",i,FineToCoarse[i],Ts[i],Ti[i],Tc[i]);
+	printf("\n ----------------------\n");
+
+
+
+
   //share the initial aggregate flags
   ogsGatherScatter(FineToCoarse, ogsHlong, ogsAdd, A->ogs);
+
+
+	printf("\n ------ FineToCoarse (RANK  = %d ) despues ------\n",rank);
+	for (dlong i=0;i<M;i++)
+		printf("%d\t%d\t%d\t%d\t%d\n",i,FineToCoarse[i],Ts[i],Ti[i],Tc[i]);
+	printf("\n ----------------------\n");
 
   // form the aggregates
   // #pragma omp parallel for
@@ -240,11 +284,25 @@ void formAggregates(parCSR *A, parCSR *C,
     Ti[n] = 0;
     Tc[n] = 0;
   }
+  
+  
+  printf("\n ------ FineToCoarse (RANK  = %d ) 1er aggreates antes------\n",rank);
+	for (dlong i=0;i<M;i++)
+		printf("%d(%d) ",FineToCoarse[i],Ti[i]);
+	printf("\n ----------------------\n");
+  
+  
   ogsGatherScatter(FineToCoarse, ogsHlong,  ogsAdd, A->ogs);
   ogsGatherScatter(Tr,     ogsDfloat, ogsAdd, A->ogs);
   ogsGatherScatter(Ts,     ogsInt,    ogsAdd, A->ogs);
   ogsGatherScatter(Ti,     ogsHlong,  ogsAdd, A->ogs);
   ogsGatherScatter(Tc,     ogsHlong,  ogsAdd, A->ogs);
+  
+  printf("\n ------ FineToCoarse (RANK  = %d ) 1er aggreates despues------\n",rank);
+	for (dlong i=0;i<M;i++)
+		printf("%d(%d) ",FineToCoarse[i],Ti[i]);
+	printf("\n ----------------------\n");
+  
 
   // second neighbours
   // #pragma omp parallel for
@@ -279,10 +337,27 @@ void formAggregates(parCSR *A, parCSR *C,
     if((states[i] == -1) && (smax == 1) && (cmax > -1))
       FineToCoarse[i] = cmax;
   }
+  
+ printf("\n ------ FineToCoarse (RANK  = %d ) 2do aggreates antes------\n",rank);
+	for (dlong i=0;i<M;i++)
+	if (i%15==0)  printf("\n");
+		printf("%d(%d) ",FineToCoarse[i],Ti[i]);
+	printf("\n ----------------------\n");
+
+
+
 
   //share results
   for (dlong n=N;n<M;n++) FineToCoarse[n] = 0;
   ogsGatherScatter(FineToCoarse, ogsHlong,  ogsAdd, A->ogs);
+
+ printf("\n ------ FineToCoarse (RANK  = %d ) 2do aggreates despues------\n",rank);
+	for (dlong i=0;i<M;i++)
+		if (i%15==0)  printf("\n");
+		printf("%d(%d) ",FineToCoarse[i],Ti[i]);
+	printf("\n ----------------------\n");
+
+
 
   free(rands);
   free(states);
@@ -293,5 +368,272 @@ void formAggregates(parCSR *A, parCSR *C,
 
   delete C;
 }
+*/
+
+
+typedef struct{
+	dlong index;
+	dlong Nnbs;
+	dlong *nbs;
+} nbs_t;
+
+
+int compareNBS(const void *a, const void *b){
+	nbs_t *pa = (nbs_t *)a;	
+	nbs_t *pb = (nbs_t *)b;
+	
+	
+	if (pa->Nnbs < pb->Nnbs)	return +1;
+	if (pa->Nnbs > pb->Nnbs)	return -1;
+	if (pa->index < pa->index )	return +1;
+	if (pa->index > pa->index )	return -1;
+	
+	return 0;
+}
+
+
+
+void formAggregates(parCSR *A, parCSR *C,
+                     hlong* FineToCoarse,
+                     hlong* globalAggStarts){
+
+  int rank, size;
+  MPI_Comm_rank(A->comm, &rank);
+  MPI_Comm_size(A->comm, &size);
+
+  const dlong N   = C->Nrows;
+  const dlong M   = C->Ncols;
+  const dlong diagNNZ = C->diag->nnz;
+  
+  printf("\n-----------------------------------------\n");
+  printf("rank = %d (LQHSSN) =>  N = %d \t M = %d    ",rank,N,M);
+  printf("\n-----------------------------------------\n");
+
+  dlong   *states = (dlong *)    calloc(M, sizeof(dlong));    //  M > N
+
+  for(dlong i=0; i<N; i++)   // initialize states to -1
+    states[i] = -1;
+  
+  hlong *globalRowStarts = A->globalRowStarts;  
+
+  // construct the local neigbors
+  nbs_t *V = (nbs_t *) calloc(N,sizeof(nbs_t));
+  
+  for(dlong i=0; i<N; i++){  
+	V[i].index = i;
+	V[i].Nnbs  = C->diag->rowStarts[i+1] - C->diag->rowStarts[i];  
+	V[i].nbs   = (dlong *) calloc(V[i].Nnbs,sizeof(dlong));
+	for (dlong j=0 ; j < V[i].Nnbs ; j++  ){
+		V[i].nbs[j] =  C->diag->cols[C->diag->rowStarts[i] + j];
+	}
+  }
+  
+  // imprime vecindades
+  /*
+  printf("\n==================================\n");
+  for(dlong i=0; i<N; i++){  
+	printf("\n Nbs %d \t\t",i);
+	for (dlong j=0 ; j < V[i].Nnbs ; j++  ){
+		printf(" %d ",V[i].nbs[j]);
+	}
+  }
+  printf("\n==================================\n");
+  */
+  
+  
+  
+  int MySort = 1;
+  //options.getArgs("SORT",MySort);
+  
+  // by default the nbs are constructed by local indices
+  if (MySort>0)		qsort(V,N,sizeof(nbs_t),compareNBS);  // sort nbs base on strong connections then indices
+  
+  dlong R_num = 0; 	// number of non-isolated nodes to be used
+     
+  for (dlong i=0;i<N;i++)
+	if(V[i].Nnbs>1)		R_num++;
+
+
+  //  printf("-----------------------\n")	;
+  //printf("R_num = %d\n",R_num);
+  //printf("-----------------------\n")	;
+
+  dlong R_nodes[R_num];   // esta declaracion puede ser problema
+  dlong R_pos[R_num];
+  
+  dlong k = 0;
+  
+  
+  for (dlong i=0;i<N;i++){    
+	if(V[i].Nnbs>1){
+		R_nodes[k] = V[i].index;	// R_nodes list of nodes to be used
+		R_pos[k] = i;				// R_pos indices of the nodes in the nbs
+		k++;
+	}
+  }
+  
+  /*
+  printf("-----------------------\n")	;
+  printf("R_num = %d   k = %d  \n",R_num,k);
+     printf("-----------------------\n")	;
+*/
+
+  dlong Agg_num = 0;  
+  
+  // First aggregates
+  //#pragma omp parallel for
+  for(dlong i=0; i<R_num; i++){
+	if (states[R_nodes[i]] == -1){
+		int ok = 0;
+		for(dlong j=0; j<V[R_pos[i]].Nnbs;j++){ 
+			if (states[V[R_pos[i]].nbs[j]]>-1){
+				ok=1;
+				//j = V[R_nodes[i]].Nnbs +10;
+				break;
+			}
+		}				
+		if (ok == 0){
+			for(dlong j=0; j<V[R_pos[i]].Nnbs;j++){
+				states[V[R_pos[i]].nbs[j]] = Agg_num;				
+			}				
+			Agg_num++;
+		}
+	 }	 
+  }
+  
+  R_num=0;   // update the number of nodes 
+
+  //for (dlong i=0;i<M;i++)   // number of non-aggregate nodes
+  //if (states[i]==-1)		R_num++;
+  
+  //k = 0;
+  
+  for (dlong i=0;i<N;i++){  // update list of  non-agreggate nodes
+	if (states[V[i].index]==-1){      // cambie k por R_num
+		R_nodes[R_num] = V[i].index;
+		R_pos[R_num] = i;
+		R_num++;					  // since V includes all the nodes this is the number of non-aggregated nodes	
+	}
+  } 
+      
+  hlong *psudoAgg = (hlong *) calloc(M,sizeof(hlong));   // overflow with dlong? 
+
+  // count the number of nodes at each aggregate
+  for (dlong i=0;i<N;i++)
+	if (states[V[i].index]>-1)		psudoAgg[states[V[i].index]]++;
+
+  // #pragma omp parallel for
+  for(dlong i=0; i<R_num; i++){
+	if (states[R_nodes[i]] == -1){ 	 // sanity check			
+		if (V[R_pos[i]].Nnbs>1){  	 // at most one neigbor
+			dlong Agg_max;
+			dlong posIndx = 0;         
+			dlong MoreAgg[Agg_num];
+			for (dlong j=0;j<Agg_num;j++)
+				MoreAgg[j]=0;		
+			// count the number of strong conections with each aggregate		
+			for(dlong j=0; j<V[R_pos[i]].Nnbs;j++){  // index 0 is itself
+				if (states[V[R_pos[i]].nbs[j]] > -1){
+					MoreAgg[states[V[R_pos[i]].nbs[j]]]++;
+				}
+			}
+			// look for the agregates with more strong connections & less nodes
+			Agg_max = -1;
+			for (dlong j=0;j<Agg_num;j++){
+				if (Agg_max <= MoreAgg[j]){
+					if (j == 0){
+						Agg_max = MoreAgg[j];
+						posIndx = j;
+					}
+					else if (Agg_max < MoreAgg[j]){							
+						Agg_max = MoreAgg[j];
+						posIndx = j;
+					}
+					else if (psudoAgg[posIndx] > psudoAgg[j]){
+						Agg_max = MoreAgg[j];
+						posIndx = j;
+					}
+				}
+			}
+			states[R_nodes[i]] = posIndx;				
+			psudoAgg[posIndx]++;
+		}
+		else{  // no neighbors (isolated node)
+			states[R_nodes[i]] = Agg_num;  // becomes a new aggregate
+			psudoAgg[Agg_num]++;
+			Agg_num++;								
+		}			
+	}	 
+  }
+  
+  // csrHaloExchange(A, sizeof(int), states, intSendBuffer, states+A->NlocalCols); since its local this should not be necesary
+
+  dlong *gNumAggs = (dlong *) calloc(size,sizeof(dlong));
+  //globalAggStarts = (hlong *) calloc(size+1,sizeof(hlong));
+  
+  // count the coarse nodes/aggregates in each rannk
+  MPI_Allgather(&Agg_num,1,MPI_DLONG,gNumAggs,1,MPI_DLONG,A->comm);
+
+  globalAggStarts[0] = 0;
+  for (int r=0;r<size;r++)
+    globalAggStarts[r+1] = globalAggStarts[r] + gNumAggs[r];
+
+  // enumerate the coarse nodes/aggregates
+  for(dlong i=0; i<N; i++)
+    FineToCoarse[i] = globalAggStarts[rank] + states[i];
+    
+  for(dlong i=N; i<M; i++)
+    FineToCoarse[i] = 0;
+    
+   //share the initial aggregate flags
+   //csrHaloExchange(A, sizeof(hlong), FineToCoarse, hlongSendBuffer, FineToCoarse+A->NlocalCols);
+ 
+/* 
+ printf("\n rank %d  Agregates antes ==========\n",rank);
+  for (dlong i=0;i<M;i++)
+  	printf("%d ",FineToCoarse[i]);
+  printf("\n=======================================\n");
+ */
+ 
+  // share results
+  for (dlong n=N;n<M;n++) FineToCoarse[n] = 0;
+	ogsGatherScatter(FineToCoarse, ogsHlong,  ogsAdd, A->ogs);
+  
+  
+  /*
+
+  printf("\n rank %d  Agregates despues ==========\n",rank);
+  for (dlong i=0;i<M;i++)
+  	printf("%d ",FineToCoarse[i]);
+  printf("\n=======================================\n");
+  */
+  
+  
+  /*
+  dlong *AggNum = (dlong *) calloc(Agg_num,sizeof(dlong));
+  
+  
+  
+  for (dlong i = 0; i<M;i++)
+	AggNum[FineToCoarse[i]]++;
+    
+  printf("\n rank %d elementos por Agregates ==========\n",rank);
+  for (dlong i=0;i<Agg_num;i++)
+  	printf("Agg %d  total = %d\n",i,AggNum[i]);
+  printf("\n=======================================\n");
+  */
+  
+  free(V);
+  free(psudoAgg);
+  
+  delete C;
+}
+
+
+
+
+
+
+
 
 } //namespace parAlmond
