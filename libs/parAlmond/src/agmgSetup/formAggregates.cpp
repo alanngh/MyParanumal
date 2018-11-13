@@ -458,8 +458,8 @@ void formAggregates(parCSR *A, parCSR *C,
   //printf("R_num = %d\n",R_num);
   //printf("-----------------------\n")	;
 
-  dlong R_nodes[R_num];   // esta declaracion puede ser problema
-  dlong R_pos[R_num];
+  dlong R_nodes[N];   // esta declaracion puede ser problema
+  dlong R_pos[N];     // N is number of local elements so at most N aggregates
   
   dlong k = 0;
   
@@ -622,7 +622,8 @@ void formAggregates(parCSR *A, parCSR *C,
   	printf("Agg %d  total = %d\n",i,AggNum[i]);
   printf("\n=======================================\n");
   */
-  
+
+  free(states);
   free(V);
   free(psudoAgg);
   
