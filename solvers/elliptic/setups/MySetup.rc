@@ -15,7 +15,7 @@ data/ellipticHomogeneous2D.h
 3
 
 [POLYNOMIAL DEGREE]
-6
+8
 
 [THREAD MODEL]
 CUDA
