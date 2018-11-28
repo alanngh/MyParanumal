@@ -15,7 +15,7 @@ data/ellipticHomogeneous2D.h
 3
 
 [POLYNOMIAL DEGREE]
-6
+8
 
 [THREAD MODEL]
 CUDA
@@ -35,8 +35,8 @@ PCG
 
 # can be IPDG, or CONTINUOUS
 [DISCRETIZATION]
-CONTINUOUS
-#IPDG
+#CONTINUOUS
+IPDG
 
 # can be NODAL or BERN
 [BASIS]
