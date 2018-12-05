@@ -117,11 +117,12 @@ int pcg(elliptic_t* elliptic, dfloat lambda,
 
     int matlab = 1;
     
-    if (options.compareArgs("VERBOSE", "TRUE")&&(mesh->rank==0))
+    if (options.compareArgs("VERBOSE", "TRUE")&&(mesh->rank==0)){
       if (matlab ==0 )
 	printf("CG: it %d r norm %12.12f alpha = %f \n",Niter, sqrt(rdotr1), alpha);
       else
 	printf(" %12.12f \n",sqrt(rdotr1));
+    }
 
     if(rdotr1 < TOL) {
       rdotr0 = rdotr1;

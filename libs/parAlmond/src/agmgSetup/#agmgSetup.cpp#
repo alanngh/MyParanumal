@@ -32,8 +32,8 @@ void solver_t::AMGSetup(parCSR *A){
 
   // approximate Nrows at coarsest level
   coarseLevel = new coarseSolver(options);
-  const int gCoarseSize = coarseLevel->getTargetSize();
-  // int gCoarseSize = 200;
+  //  const int gCoarseSize = coarseLevel->getTargetSize();
+  int gCoarseSize = 50;
   
   AMGstartLev = numLevels;
 

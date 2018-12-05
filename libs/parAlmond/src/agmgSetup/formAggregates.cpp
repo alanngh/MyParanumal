@@ -32,7 +32,7 @@ namespace parAlmond {
 typedef struct{
 	dlong  index;
 	dlong  Nnbs;
-	dlong  LNN;
+	dlong LNN;
 } nbs_t;
 
   
@@ -99,9 +99,9 @@ void formAggregates(parCSR *A, parCSR *C,
 	V[i].Nnbs     = C->diag->rowStarts[i+1] - C->diag->rowStarts[i];
 	dlong dist     = C->diag->cols[C->diag->rowStarts[i+1]-1] - C->diag->cols[C->diag->rowStarts[i]];
 	if (dist  > 0 )
-	  V[i].LNN   = V[i].Nnbs/dist;
+	  V[i].LNN   =  V[i].Nnbs/dist;
 	else
-	  V[i].LNN   = 0;	  
+	  V[i].LNN = 0;	  
   }
   
     

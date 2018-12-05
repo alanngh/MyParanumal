@@ -6,7 +6,10 @@ data/ellipticHomogeneous2D.h
 
 [MESH FILE]
 ../../meshes/cavityH00125.msh
+<<<<<<< HEAD
 #../../meshes/cavityH0025.msh
+=======
+>>>>>>> 25082c10ad40cddfcc0016bfc0a196408c7c1846
 
 [MESH DIMENSION]
 2
@@ -15,7 +18,11 @@ data/ellipticHomogeneous2D.h
 3
 
 [POLYNOMIAL DEGREE]
+<<<<<<< HEAD
 9
+=======
+5
+>>>>>>> 25082c10ad40cddfcc0016bfc0a196408c7c1846
 
 [THREAD MODEL]
 CUDA
@@ -31,12 +38,20 @@ CUDA
 
 # can add FLEXIBLE to PCG
 [KRYLOV SOLVER]
+<<<<<<< HEAD
 PCG+FLEXIBLE
 
 # can be IPDG, or CONTINUOUS
 [DISCRETIZATION]
 #CONTINUOUS
 IPDG
+=======
+PCG
+
+# can be IPDG, or CONTINUOUS
+[DISCRETIZATION]
+CONTINUOUS
+>>>>>>> 25082c10ad40cddfcc0016bfc0a196408c7c1846
 
 # can be NODAL or BERN
 [BASIS]
@@ -44,8 +59,12 @@ NODAL
 
 # can be NONE, JACOBI, MASSMATRIX, FULLALMOND, SEMFEM, or MULTIGRID
 [PRECONDITIONER]
+<<<<<<< HEAD
 #FULLALMOND
 MULTIGRID
+=======
+FULLALMOND
+>>>>>>> 25082c10ad40cddfcc0016bfc0a196408c7c1846
 
 ########## MULTIGRID Options ##############
 
@@ -95,3 +114,30 @@ cavity
 [VERBOSE]
 TRUE
 
+<<<<<<< HEAD
+=======
+
+###########################################
+#  my parametheres
+###########################################
+
+
+# 0 libparanumal, 1 my modifications, 2 hybrid
+[MYFUNCTIONS]
+1
+
+[FINALCOARSEGRIDSIZE]
+1000
+
+# positive number less than 1
+[COARSENTHRESHOLD]
+0.5
+
+# residuals printend in matlab format to be ploted
+[MATLAB]
+1
+
+[SORT]
+0
+
+>>>>>>> 25082c10ad40cddfcc0016bfc0a196408c7c1846

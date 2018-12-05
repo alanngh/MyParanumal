@@ -7,6 +7,8 @@ data/ellipticHomogeneous2D.h
 [MESH FILE]
 ../../meshes/cavityH00125.msh
 #../../meshes/cavityH0025.msh
+#../../meshes/ShishkinMesh01.msh
+
 
 [MESH DIMENSION]
 2
@@ -46,6 +48,7 @@ NODAL
 [PRECONDITIONER]
 #FULLALMOND
 MULTIGRID
+
 
 ########## MULTIGRID Options ##############
 
@@ -94,4 +97,3 @@ cavity
 
 [VERBOSE]
 TRUE
-
